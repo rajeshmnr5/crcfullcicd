@@ -31,4 +31,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      sh "kubectl delete pod kaniko-build --ignore-not-found=true"
+    }
+  }  
 }
