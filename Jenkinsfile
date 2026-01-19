@@ -6,6 +6,7 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
+  serviceAccount: jenkins-sa
   containers:
   - name: kubectl
     image: dtzar/helm-kubectl:3.14.0
