@@ -20,3 +20,6 @@ spec:
     - name: docker-config
       secret:
         secretName: nexus-regcred
+        items:
+        - key: .dockerconfigjson
+          path: config.json
