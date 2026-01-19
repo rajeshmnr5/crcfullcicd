@@ -42,31 +42,33 @@ spec:
         container('kubectl') {
           sh '''
             kubectl delete pod kaniko-build --ignore-not-found=true
-            kubectl apply -f /tmp/kaniko.yaml
-    
+            kubectl apply -f kaniko.yaml
+
             echo "Waiting for Kaniko build to finish..."
-    
+
             while true; do
               STATUS=$(kubectl get pod kaniko-build -o jsonpath='{.status.phase}')
               echo "Kaniko status: $STATUS"
-    
+
               if [ "$STATUS" = "Succeeded" ]; then
                 echo "Build completed"
                 break
               fi
-    
+
               if [ "$STATUS" = "Failed" ]; then
                 echo "Build failed"
                 kubectl logs kaniko-build
                 exit 1
               fi
-    
+
               sleep 5
             done
           '''
         }
       }
     }
+
+  }   // ✅ CLOSE stages
 
   post {
     always {
@@ -75,4 +77,5 @@ spec:
       }
     }
   }
-}
+
+}   // ✅ CLOSE pipeline
