@@ -8,7 +8,7 @@ kind: Pod
 spec:
   containers:
   - name: kubectl
-    image: lachlanevenson/k8s-kubectl:v1.28.0
+    image: bitnami/kubectl:1.29
     command:
     - sh
     - -c
