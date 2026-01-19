@@ -32,7 +32,7 @@ spec:
     stage('Prepare Kaniko Manifest') {
       steps {
         sh """
-          sed 's|{{TAG}}|${TAG}|g' ci/kaniko.yaml > /tmp/kaniko.yaml
+          sed "s|{{TAG}}|${BUILD_NUMBER}|g" ci/kaniko.yaml > /tmp/kaniko.yaml
         """
       }
     }
