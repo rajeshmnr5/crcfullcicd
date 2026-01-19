@@ -12,6 +12,7 @@ spec:
     command:
     - cat
     tty: true
+
   - name: jnlp
     image: jenkins/inbound-agent:latest
 """
@@ -19,37 +20,38 @@ spec:
   }
 
   environment {
-    IMAGE_TAG = "${BUILD_NUMBER}"
+    IMAGE = "192.168.29.202:32001/crcfullcicd"
+    TAG   = "${BUILD_NUMBER}"
   }
 
   stages {
 
-    stage("Prepare Kaniko Manifest") {
+    stage('Prepare Kaniko Manifest') {
       steps {
-        sh '''
-        sed "s|\\${TAG}|${IMAGE_TAG}|g" ci/kaniko.yaml > kaniko-build.yaml
-        '''
+        sh """
+          sed 's|{{TAG}}|${TAG}|g' ci/kaniko.yaml > /tmp/kaniko.yaml
+        """
       }
     }
 
-    stage("Build & Push Image") {
+    stage('Build & Push Image') {
       steps {
-        sh '''
-        kubectl delete pod kaniko-build --ignore-not-found=true
-        kubectl apply -f kaniko-build.yaml
-
-        kubectl wait pod/kaniko-build \
-          --for=condition=Ready \
-          --timeout=300s || true
-
-        kubectl logs -f kaniko-build
-        '''
+        container('kubectl') {
+          sh """
+            kubectl delete pod kaniko-build --ignore-not-found=true
+            kubectl apply -f /tmp/kaniko.yaml
+            kubectl wait pod/kaniko-build --for=condition=Succeeded --timeout=600s
+          """
+        }
       }
     }
   }
+
   post {
     always {
-      sh "kubectl delete pod kaniko-build --ignore-not-found=true"
+      container('kubectl') {
+        sh "kubectl delete pod kaniko-build --ignore-not-found=true"
+      }
     }
-  }  
+  }
 }
