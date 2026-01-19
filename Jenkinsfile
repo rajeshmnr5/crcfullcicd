@@ -1,5 +1,23 @@
 pipeline {
-  agent any
+
+  agent {
+      kubernetes {
+        yaml """
+    apiVersion: v1
+    kind: Pod
+    spec:
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - cat
+        tty: true
+    
+      - name: jnlp
+        image: jenkins/inbound-agent:latest
+    """
+      }
+    }
 
   environment {
     IMAGE_TAG = "${BUILD_NUMBER}"
