@@ -32,7 +32,7 @@ spec:
     stage('Prepare Kaniko Manifest') {
       steps {
         sh """
-          sed "s|{{TAG}}|${BUILD_NUMBER}|g" ci/kaniko.yaml > /tmp/kaniko.yaml
+          sed "s|{{TAG}}|${BUILD_NUMBER}|g" ci/kaniko.yaml > kaniko.yaml
         """
       }
     }
@@ -42,7 +42,7 @@ spec:
         container('kubectl') {
           sh """
             kubectl delete pod kaniko-build --ignore-not-found=true
-            kubectl apply -f /tmp/kaniko.yaml
+            kubectl apply -f kaniko.yaml
             kubectl wait pod/kaniko-build --for=condition=Succeeded --timeout=600s
           """
         }
