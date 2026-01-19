@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko-build
+spec:
+  restartPolicy: Never
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+      - "--dockerfile=Dockerfile"
+      - "--context=git://github.com/rajeshmnr5/crcfullcicd.git"
+      - "--destination=192.168.29.202:32001/crcfullcicd:${TAG}"
+      - "--insecure"
+      - "--skip-tls-verify"
+    volumeMounts:
+      - name: docker-config
+        mountPath: /kaniko/.docker
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: nexus-regcred
