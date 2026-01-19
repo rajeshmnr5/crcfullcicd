@@ -8,10 +8,12 @@ kind: Pod
 spec:
   containers:
   - name: kubectl
-    image: bitnami/kubectl:latest
-    command:
-    - cat
-    tty: true
+  image: lachlanevenson/k8s-kubectl:v1.29.0
+  command:
+  - sh
+  - -c
+  - cat
+  tty: true
 
   - name: jnlp
     image: jenkins/inbound-agent:latest
