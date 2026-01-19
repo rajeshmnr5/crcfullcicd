@@ -40,15 +40,33 @@ spec:
     stage('Build & Push Image') {
       steps {
         container('kubectl') {
-          sh """
+          sh '''
             kubectl delete pod kaniko-build --ignore-not-found=true
-            kubectl apply -f kaniko.yaml
-            kubectl wait pod/kaniko-build --for=condition=Succeeded --timeout=600s
-          """
+            kubectl apply -f /tmp/kaniko.yaml
+    
+            echo "Waiting for Kaniko build to finish..."
+    
+            while true; do
+              STATUS=$(kubectl get pod kaniko-build -o jsonpath='{.status.phase}')
+              echo "Kaniko status: $STATUS"
+    
+              if [ "$STATUS" = "Succeeded" ]; then
+                echo "Build completed"
+                break
+              fi
+    
+              if [ "$STATUS" = "Failed" ]; then
+                echo "Build failed"
+                kubectl logs kaniko-build
+                exit 1
+              fi
+    
+              sleep 5
+            done
+          '''
         }
       }
     }
-  }
 
   post {
     always {
