@@ -7,12 +7,6 @@ pipeline {
 
   stages {
 
-    stage("Checkout") {
-      steps {
-        git "https://github.com/rajeshmnr5/crcfullcicd.git"
-      }
-    }
-
     stage("Prepare Kaniko Manifest") {
       steps {
         sh '''
